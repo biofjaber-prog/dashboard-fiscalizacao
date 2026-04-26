@@ -267,21 +267,7 @@ footer{background:var(--primary);border-top:3px solid var(--accent);padding:14px
   </div>
   <div class="hdr-pill">Atualizado em 26/04/2026</div>
 </header>
-<!-- BARRA DE EXPORTAÇÃO -->
-<div style="max-width:1560px;margin:0 auto;padding:10px 36px 0;display:flex;align-items:center;gap:10px">
-
-  <button onclick="exportarExcel()" style="display:inline-flex;align-items:center;gap:6px;padding:6px 16px;border-radius:6px;border:1.5px solid #15803d88;background:#fff;font-size:13px;font-weight:600;color:#15803d;cursor:pointer;font-family:'Inter',sans-serif;transition:background 0.15s" onmouseover="this.style.background='#EAF3DE'" onmouseout="this.style.background='#fff'">
-    <svg width="16" height="16" viewBox="0 0 16 16"><rect x="1" y="1" width="14" height="14" rx="2" fill="#15803d" opacity="0.15"/><rect x="1" y="1" width="14" height="14" rx="2" stroke="#15803d" stroke-width="1" fill="none"/><text x="8" y="11" text-anchor="middle" font-size="6.5" font-weight="700" fill="#15803d" font-family="sans-serif">XLS</text></svg>
-    Exportar Excel
-  </button>
-
-  <button onclick="exportarPDF()" style="display:inline-flex;align-items:center;gap:6px;padding:6px 16px;border-radius:6px;border:1.5px solid #b91c1c88;background:#fff;font-size:13px;font-weight:600;color:#b91c1c;cursor:pointer;font-family:'Inter',sans-serif;transition:background 0.15s" onmouseover="this.style.background='#FCEBEB'" onmouseout="this.style.background='#fff'">
-    <svg width="16" height="16" viewBox="0 0 16 16"><rect x="1" y="1" width="14" height="14" rx="2" fill="#b91c1c" opacity="0.15"/><rect x="1" y="1" width="14" height="14" rx="2" stroke="#b91c1c" stroke-width="1" fill="none"/><text x="8" y="11" text-anchor="middle" font-size="6.5" font-weight="700" fill="#b91c1c" font-family="sans-serif">PDF</text></svg>
-    Exportar PDF
-  </button>
-
-  <span style="font-size:11px;color:#64748b">Exporta os dados filtrados</span>
-</div>
+  
 <div class="fbar">
   <div class="fbar-wrap">
     <div class="fbar-box">
@@ -621,16 +607,7 @@ function chartFilter(tipo,valor){
   }
   doConsult();
 }
-
-function exportarExcel(){
-  // lógica de exportação CSV/XLSX dos dados filtrados (fd)
-  alert('Exportando ' + fd.length + ' US em Excel...');
-}
-function exportarPDF(){
-  // lógica de exportação PDF dos dados filtrados (fd)
-  alert('Exportando ' + fd.length + ' US em PDF...');
-}
-  
+ 
 function goPage(dir){
   const tp=Math.ceil(fd.length/PS)||1;
   cur=Math.max(1,Math.min(tp,cur+dir));
