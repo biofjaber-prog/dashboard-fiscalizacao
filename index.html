@@ -483,7 +483,7 @@ tbody tr.row-blocked td.tc-us{color:#b91c1c}
 const DATA=[
 {us:"NSAT-6257",d:"Acesso ao Controle da Atividade Fiscal (SEFIS) - Plantão",dev:"Rubia Carvalho",sp:"Sprint 19",st:"Em testes",dep:"Não há"},
 {us:"NSAT-6258",d:"Finalização de Plantão Fiscal",dev:"Rubia Carvalho",sp:"Sprint 20",st:"Em desenvolvimento",dep:"NSAT-6257"},
-{us:"NSAT-6282",d:"Controle de Análise e Instrução de Processo - SEFIS INDIVIDUAL",dev:"Lucas Bonifácio",sp:"Sprint 19",st:"Testes concluídos",dep:"Não há"},
+{us:"NSAT-6282",d:"Controle de Análise e Instrução de Processo - SEFIS INDIVIDUAL",dev:"Lucas Bonifácio",sp:"Sprint 19",st:"Em homologação",dep:"Não há"},
 {us:"NSAT-6290",d:"Análise e Instrução de Processo - SEFIS (Entrega em Lote)",dev:"Lucas Bonifácio",sp:"Sprint 20",st:"Em desenvolvimento",dep:"Tarefas pendentes"},
 {us:"NSAT-6328",d:"Análise e Instrução de Processo - SEFIS (Devolução em Lote)",dev:"Lucas Bonifácio",sp:"Sprint 20",st:"Apresentar e planejar",dep:"Tarefas pendentes"},
 {us:"NSAT-6329",d:"Carregamento e Edição do Quadro de Apuração no Despacho de Análise e Instrução de Processo",dev:"Rafaela Piedade",sp:"Sprint 21",st:"Apresentar e planejar",dep:"NSAT-6595 / NSAT-6543"},
@@ -544,7 +544,7 @@ function ini(n){return n.split(' ').map(x=>x[0]).join('').slice(0,2).toUpperCase
 function hd(v){return v&&v!=='Não há'&&v!=='Tarefas pendentes'&&v!==''}
 
 function stBadge(s){
-  const m={'Testes concluídos':'b-tc','Em testes':'b-et','Em desenvolvimento':'b-ed','A apresentar e planejar':'b-ap','Apresentar e planejar':'b-ep','Aguardando aprovação do cliente':'b-ag','Aprovada pelo cliente':'b-ac'};
+  const m={'Testes concluídos':'b-tc','Em testes':'b-et','Em homologação':'b-et','Em desenvolvimento':'b-ed','A apresentar e planejar':'b-ap','Apresentar e planejar':'b-ep','Aguardando aprovação do cliente':'b-ag','Aprovada pelo cliente':'b-ac'};
   return '<span class="badge '+(m[s]||'b-ap')+'">'+s+'</span>';
 }
 
