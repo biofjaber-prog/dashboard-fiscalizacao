@@ -199,6 +199,45 @@ footer{background:var(--primary);border-top:3px solid var(--accent);padding:14px
 
 .empty-msg{padding:16px;text-align:center;color:var(--muted);font-size:0.78rem}
 
+/* TAXA DE CONCLUSÃO CARD */
+.kcard-taxa{position:relative;overflow:hidden}
+.kcard-taxa .taxa-bar{position:absolute;bottom:0;left:0;height:4px;background:linear-gradient(90deg,#15803d,#22c55e);border-radius:0 4px 4px 0;transition:width 0.8s ease}
+
+/* BARRA DE PROGRESSO SPRINT */
+.scard .sprg-wrap{padding:6px 10px 8px;background:#f8fafc}
+.scard .sprg-label{display:flex;justify-content:space-between;font-size:0.58rem;font-weight:700;color:var(--muted);margin-bottom:4px}
+.scard .sprg-bar{height:6px;background:#e2e8f0;border-radius:3px;overflow:hidden}
+.scard .sprg-fill{height:100%;border-radius:3px;transition:width 0.6s ease}
+
+/* VELOCIDADE POR DEV */
+.vel-section{margin-bottom:24px}
+.vel-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:12px;overflow:hidden;transition:max-height 0.4s ease,opacity 0.3s ease,margin 0.3s ease;max-height:2000px;opacity:1}
+.vel-grid.collapsed{max-height:0;opacity:0;margin:0}
+.vel-card{background:#fff;border-radius:12px;padding:14px 16px;box-shadow:0 2px 12px rgba(0,0,0,0.07);display:flex;flex-direction:column;gap:8px}
+.vel-header{display:flex;align-items:center;gap:8px}
+.vel-av{width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:0.62rem;font-weight:800;color:#fff;flex-shrink:0}
+.vel-name{font-size:0.72rem;font-weight:700;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.vel-stats{display:flex;justify-content:space-between;font-size:0.67rem;color:var(--muted);font-weight:600}
+.vel-stats b{color:var(--text)}
+.vel-bar{height:7px;background:#e2e8f0;border-radius:4px;overflow:hidden}
+.vel-fill{height:100%;border-radius:4px;transition:width 0.6s ease}
+.vel-pct{font-size:0.65rem;font-weight:800;text-align:right}
+
+/* LINHA BLOQUEADA NA TABELA */
+tbody tr.row-blocked{background:#fff5f5 !important}
+tbody tr.row-blocked:hover{background:#fee2e2 !important}
+tbody tr.row-blocked td.tc-us{color:#b91c1c}
+
+/* CHART EVOLUCAO */
+.cgrid3{display:grid;grid-template-columns:1fr;gap:16px;margin-bottom:24px}
+.cwrap-tall{position:relative;height:240px}
+
+@media(max-width:768px){
+  .vel-grid{grid-template-columns:1fr 1fr}
+  .cgrid3{margin-bottom:16px}
+  .cwrap-tall{height:200px}
+}
+
 /* ===== MOBILE RESPONSIVE ===== */
 @media(max-width:768px){
   .hdr{padding:12px 16px;flex-wrap:wrap;gap:10px}
@@ -328,7 +367,7 @@ footer{background:var(--primary);border-top:3px solid var(--accent);padding:14px
       </div>
       <div class="frow2">
         <div class="fgroup">
-          <label class="flbl" for="sSearch">Descrição da US:</label>
+          <label class="flbl" for="sSearch">Busca por US ou Descrição:</label>
           <input type="text" id="sSearch" placeholder="Digite o código ou descrição...">
         </div>
       </div>
@@ -348,7 +387,7 @@ footer{background:var(--primary);border-top:3px solid var(--accent);padding:14px
     <div class="kcard c-yellow"><div class="klbl">Em Desenvolvimento</div><div class="kval" id="kD">—</div><div class="ksub">Sprint corrente</div></div>
     <div class="kcard c-purple"><div class="klbl">A Planejar</div><div class="kval" id="kP">—</div><div class="ksub">Próximas sprints</div></div>
     <div class="kcard c-red"><div class="klbl">Com Dependência</div><div class="kval" id="kDp">—</div><div class="ksub">Bloqueadas por outras US</div></div>
-    <div class="kcard c-teal"><div class="klbl">Devs Ativos</div><div class="kval" id="kDv">—</div><div class="ksub">Desenvolvedores alocados</div></div>
+    <div class="kcard c-teal kcard-taxa"><div class="klbl">Taxa de Conclusão</div><div class="kval" id="kTaxa">—</div><div class="ksub" id="kTaxaSub">do backlog concluído</div><div class="taxa-bar" id="taxaBar" style="width:0%"></div></div>
   </div>
 
   <p class="stit">Análise Gráfica</p>
@@ -359,6 +398,21 @@ footer{background:var(--primary);border-top:3px solid var(--accent);padding:14px
   <div class="cgrid2">
     <div class="ccard"><div class="ctit">US por Sprint</div><div class="cwrap"><canvas id="cSpr"></canvas></div></div>
     <div class="ccard"><div class="ctit">Dependências</div><div class="cwrap"><canvas id="cDep"></canvas></div></div>
+  </div>
+
+  <div class="cgrid3">
+    <div class="ccard"><div class="ctit">📈 Evolução de Conclusões por Sprint</div><div class="cwrap-tall"><canvas id="cEvolucao"></canvas></div></div>
+  </div>
+
+  <div class="vel-section">
+    <div class="dep-toggle-bar" onclick="toggleVel()">
+      <p class="stit">Velocidade por Desenvolvedor</p>
+      <button class="dep-toggle-btn" id="velToggleBtn">
+        <span class="arrow">&#9660;</span>
+        <span id="velToggleTxt">Recolher</span>
+      </button>
+    </div>
+    <div id="velGrid" class="vel-grid"></div>
   </div>
 
   <div class="dep-section" id="sprintSection">
@@ -528,6 +582,7 @@ function toggleMsOpt(id,val,e){
   if(idx>-1) arr.splice(idx,1); else arr.push(val);
   renderMsTags(id);
   renderMsOpts(id,MS_OPTS_ALL[id]);
+  doConsult();
 }
 
 function removeMsTag(id,val,e){
@@ -536,6 +591,7 @@ function removeMsTag(id,val,e){
   arr.splice(arr.indexOf(val),1);
   renderMsTags(id);
   renderMsOpts(id,MS_OPTS_ALL[id]);
+  doConsult();
 }
 
 function renderMsTags(id){
@@ -584,12 +640,8 @@ function doConsult(){
       if(dv.length&&!dv.includes(x.dev))return false;
       if(sp.length&&!sp.includes(x.sp))return false;
       if(st.length&&!st.includes(x.st))return false;
-      if(dp.length>0){
-	  const temDep=hd(x.dep);
-      const passaSim=dp.includes('sim')&&temDep;
-      const passaNao=dp.includes('nao')&&!temDep;
-      if(!passaSim&&!passaNao)return false;
-}
+      if(dp.includes('sim')&&!hd(x.dep))return false;
+      if(dp.includes('nao')&&hd(x.dep))return false;
       return true;
     });
     cur=1;render();
@@ -598,16 +650,21 @@ function doConsult(){
 }
 
 function render(){
-  kpis();tbl();deps();sprint();charts();
+  kpis();tbl();deps();sprint();charts();velocity();
 }
 
 function kpis(){
-  document.getElementById('kT').textContent=fd.length;
-  document.getElementById('kC').textContent=fd.filter(x=>x.st==='Testes concluídos').length;
+  const total=fd.length;
+  const conc=fd.filter(x=>x.st==='Testes concluídos').length;
+  const pct=total>0?Math.round((conc/total)*100):0;
+  document.getElementById('kT').textContent=total;
+  document.getElementById('kC').textContent=conc;
   document.getElementById('kD').textContent=fd.filter(x=>x.st==='Em desenvolvimento').length;
   document.getElementById('kP').textContent=fd.filter(x=>x.st.toLowerCase().includes('planejar')).length;
   document.getElementById('kDp').textContent=fd.filter(x=>hd(x.dep)).length;
-  document.getElementById('kDv').textContent=[...new Set(fd.map(x=>x.dev))].length;
+  document.getElementById('kTaxa').textContent=pct+'%';
+  document.getElementById('kTaxaSub').textContent=conc+' de '+total+' concluídas';
+  setTimeout(()=>{ document.getElementById('taxaBar').style.width=pct+'%'; },100);
 }
 
 function tbl(){
@@ -618,9 +675,15 @@ function tbl(){
   document.getElementById('pNext').disabled=cur>=tp;
   document.getElementById('tCnt').textContent=tot+' itens';
   document.getElementById('noRes').style.display=tot===0?'':'none';
+  // US concluídas para checar bloqueio real
+  const concUs=new Set(DATA.filter(x=>x.st==='Testes concluídos').map(x=>x.us));
   document.getElementById('tBody').innerHTML=pg.map(x=>{
     const c=DC[x.dev]||'#64748b';
-    return '<tr><td class="tc-us">'+x.us+'</td><td class="tc-desc"><span title="'+x.d+'">'+x.d+'</span></td>'+
+    // bloqueada = tem dependência E a dep não está concluída
+    const blocked=hd(x.dep)&&x.dep.split('/').map(d=>d.trim()).some(d=>d&&!concUs.has(d));
+    const rowCls=blocked?' class="row-blocked"':'';
+    const blockedIcon=blocked?'🔴 ':'';
+    return '<tr'+rowCls+'><td class="tc-us">'+blockedIcon+x.us+'</td><td class="tc-desc"><span title="'+x.d+'">'+x.d+'</span></td>'+
     '<td><div class="dchip"><div class="dav" style="background:'+c+'">'+ini(x.dev)+'</div>'+x.dev+'</div></td>'+
     '<td style="font-size:0.68rem;white-space:nowrap;color:var(--muted)">'+x.sp+'</td>'+
     '<td>'+stBadge(x.st)+'</td>'+
@@ -639,12 +702,22 @@ function deps(){
 
 function sprint(){
   const SPS=[{id:'Sprint 19',cls:'s19',dt:'13/04–24/04'},{id:'Sprint 20',cls:'s20',dt:'27/04–08/05'},{id:'Sprint 21',cls:'s21',dt:'11/05–22/05'},{id:'Sprint 22',cls:'s22',dt:'25/05–05/06'},{id:'Sprint 23',cls:'s23',dt:'08/06–19/06'}];
+  const clrMap={'s19':'#6b7280','s20':'#1d4ed8','s21':'#7c3aed','s22':'#0d9488','s23':'#ea580c'};
   document.getElementById('sGrid').innerHTML=SPS.map(s=>{
     const it=fd.filter(x=>x.sp===s.id);
-    return '<div class="scard"><div class="shead '+s.cls+'"><span>'+s.id+'</span><span class="scnt">'+it.length+' US</span></div>'+
-    '<div class="sdates">'+s.dt+'</div><div class="sitems">'+
-    (it.length===0?'<div class="empty-msg">Sem itens</div>':it.map(x=>'<div class="sus-row" title="'+x.d+' — '+x.dev+'"><span class="sus-code">'+x.us+'</span><div class="sdot" style="background:'+(DC[x.dev]||'#64748b')+'"></div></div>').join(''))+
-    '</div></div>';
+    const conc=it.filter(x=>x.st==='Testes concluídos').length;
+    const pct=it.length>0?Math.round((conc/it.length)*100):0;
+    const clr=clrMap[s.cls]||'#1d4ed8';
+    return '<div class="scard">'+
+      '<div class="shead '+s.cls+'"><span>'+s.id+'</span><span class="scnt">'+it.length+' US</span></div>'+
+      '<div class="sdates">'+s.dt+'</div>'+
+      '<div class="sprg-wrap">'+
+        '<div class="sprg-label"><span>Progresso</span><span>'+conc+'/'+it.length+' ('+pct+'%)</span></div>'+
+        '<div class="sprg-bar"><div class="sprg-fill" style="width:'+pct+'%;background:'+clr+'"></div></div>'+
+      '</div>'+
+      '<div class="sitems">'+
+      (it.length===0?'<div class="empty-msg">Sem itens</div>':it.map(x=>'<div class="sus-row" title="'+x.d+' — '+x.dev+'"><span class="sus-code">'+x.us+'</span><div class="sdot" style="background:'+(DC[x.dev]||'#64748b')+'"></div></div>').join(''))+
+      '</div></div>';
   }).join('');
 }
 
@@ -700,6 +773,61 @@ function charts(){
     }
   });
   document.getElementById('cDep').style.cursor='pointer';
+
+  // GRÁFICO EVOLUÇÃO POR SPRINT
+  const spls2=['Sprint 19','Sprint 20','Sprint 21','Sprint 22','Sprint 23'];
+  const concPorSprint=spls2.map(s=>fd.filter(x=>x.sp===s&&x.st==='Testes concluídos').length);
+  const totalPorSprint=spls2.map(s=>fd.filter(x=>x.sp===s).length);
+  const pctPorSprint=spls2.map((s,i)=>totalPorSprint[i]>0?Math.round((concPorSprint[i]/totalPorSprint[i])*100):0);
+  if(CH.evol)CH.evol.destroy();
+  CH.evol=new Chart(document.getElementById('cEvolucao'),{
+    type:'bar',
+    data:{
+      labels:spls2,
+      datasets:[
+        {label:'Concluídas',data:concPorSprint,backgroundColor:'#15803dbb',borderColor:'#15803d',borderWidth:2,borderRadius:6,yAxisID:'y'},
+        {label:'Total',data:totalPorSprint,backgroundColor:'#1d4ed822',borderColor:'#1d4ed8',borderWidth:2,borderRadius:6,yAxisID:'y'},
+        {label:'% Conclusão',data:pctPorSprint,type:'line',borderColor:'#f59e0b',backgroundColor:'#f59e0b33',borderWidth:2.5,pointRadius:5,pointBackgroundColor:'#f59e0b',tension:0.3,yAxisID:'y2'}
+      ]
+    },
+    options:{
+      responsive:true,maintainAspectRatio:false,
+      interaction:{mode:'index',intersect:false},
+      plugins:{legend:{position:'top',labels:{font:{family:'Inter',size:10},boxWidth:12,padding:12}},
+        tooltip:{callbacks:{label:ctx=>ctx.dataset.label+': '+(ctx.dataset.yAxisID==='y2'?ctx.raw+'%':ctx.raw+' US')}}},
+      scales:{
+        y:{beginAtZero:true,grid:{color:'#f1f5f9'},ticks:{font:{family:'Inter',size:10},stepSize:1},title:{display:true,text:'Quantidade de US',font:{size:10}}},
+        y2:{beginAtZero:true,max:100,position:'right',grid:{display:false},ticks:{font:{family:'Inter',size:10},callback:v=>v+'%'},title:{display:true,text:'% Conclusão',font:{size:10}}}
+      }
+    }
+  });
+}
+
+function velocity(){
+  const devList=[...new Set(DATA.map(x=>x.dev))].sort();
+  document.getElementById('velGrid').innerHTML=devList.map(dev=>{
+    const total=fd.filter(x=>x.dev===dev).length;
+    const conc=fd.filter(x=>x.dev===dev&&x.st==='Testes concluídos').length;
+    const pct=total>0?Math.round((conc/total)*100):0;
+    const cor=DC[dev]||'#64748b';
+    const pctColor=pct>=70?'#15803d':pct>=40?'#b45309':'#b91c1c';
+    return '<div class="vel-card">'+
+      '<div class="vel-header"><div class="vel-av" style="background:'+cor+'">'+ini(dev)+'</div><div class="vel-name" title="'+dev+'">'+dev+'</div></div>'+
+      '<div class="vel-stats"><span>Concluídas: <b>'+conc+'</b></span><span>Total: <b>'+total+'</b></span></div>'+
+      '<div class="vel-bar"><div class="vel-fill" style="width:'+pct+'%;background:'+cor+'"></div></div>'+
+      '<div class="vel-pct" style="color:'+pctColor+'">'+pct+'% concluído</div>'+
+    '</div>';
+  }).join('');
+}
+
+function toggleVel(){
+  const grid=document.getElementById('velGrid');
+  const btn=document.getElementById('velToggleBtn');
+  const txt=document.getElementById('velToggleTxt');
+  const isNowCollapsed=grid.classList.toggle('collapsed');
+  btn.classList.toggle('collapsed',isNowCollapsed);
+  txt.textContent=isNowCollapsed?'Expandir':'Recolher';
+  btn.querySelector('.arrow').style.transform=isNowCollapsed?'rotate(-90deg)':'rotate(0deg)';
 }
 
 function chartFilter(tipo,valor){
