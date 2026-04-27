@@ -457,8 +457,7 @@ tbody tr.row-blocked td.tc-us{color:#b91c1c}
       <h3>Backlog Completo — Todas as User Stories</h3>
       <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">
         <span class="dpill" id="tCnt">0 itens</span>
-        <button onclick="exportCSV()" style="background:rgba(255,255,255,0.15);border:1px solid rgba(255,255,255,0.3);border-radius:5px;color:#fff;padding:4px 10px;font-size:0.68rem;font-weight:700;cursor:pointer;font-family:'Inter',sans-serif;transition:background 0.2s" onmouseover="this.style.background='rgba(255,255,255,0.25)'" onmouseout="this.style.background='rgba(255,255,255,0.15)'">Exportar CSV</button>
-        <button onclick="copyUS()" style="background:rgba(255,255,255,0.15);border:1px solid rgba(255,255,255,0.3);border-radius:5px;color:#fff;padding:4px 10px;font-size:0.68rem;font-weight:700;cursor:pointer;font-family:'Inter',sans-serif;transition:background 0.2s" onmouseover="this.style.background='rgba(255,255,255,0.25)'" onmouseout="this.style.background='rgba(255,255,255,0.15)'">Copiar US</button>
+        <button onclick="exportXLSX()" style="background:rgba(255,255,255,0.15);border:1px solid rgba(255,255,255,0.3);border-radius:5px;color:#fff;padding:4px 10px;font-size:0.68rem;font-weight:700;cursor:pointer;font-family:'Inter',sans-serif;transition:background 0.2s" onmouseover="this.style.background='rgba(255,255,255,0.25)'" onmouseout="this.style.background='rgba(255,255,255,0.15)'">Exportar Excel</button>
       </div>
     </div>
     <div class="twrap">
@@ -919,13 +918,41 @@ function exportCSV(){
   },100);
 }
 
-function copyUS(){
-  const codes=fd.map(x=>x.us).join('\n');
-  navigator.clipboard.writeText(codes).then(()=>{
-    const t=document.getElementById('copyToast');
-    t.classList.add('show');
-    setTimeout(()=>t.classList.remove('show'),2200);
-  });
+function exportXLSX(){
+  const cols=['US','Descrição','Desenvolvedor','Sprint','Status','Dependência'];
+  const esc=v=>(v||'').toString().replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+  const cell=(v,bold)=>`<Cell ss:StyleID="${bold?'h':'d'}"><Data ss:Type="String">${esc(v)}</Data></Cell>`;
+  const headerRow=`<Row>${cols.map(c=>cell(c,true)).join('')}</Row>`;
+  const dataRows=fd.map(x=>`<Row>${[x.us,x.d,x.dev,x.sp,x.st,x.dep].map(v=>cell(v,false)).join('')}</Row>`).join('');
+  const xml=`<?xml version="1.0" encoding="UTF-8"?>
+<?mso-application progid="Excel.Sheet"?>
+<Workbook xmlns="urn:schemas-microsoft-com:office:spreadsheet"
+ xmlns:ss="urn:schemas-microsoft-com:office:spreadsheet">
+<Styles>
+  <Style ss:ID="h"><Font ss:Bold="1"/><Interior ss:Color="#0F1F3D" ss:Pattern="Solid"/><Font ss:Color="#FFFFFF" ss:Bold="1"/></Style>
+  <Style ss:ID="d"><Alignment ss:WrapText="1"/></Style>
+</Styles>
+<Worksheet ss:Name="Backlog">
+<Table ss:DefaultColumnWidth="80">
+  <Column ss:Width="100"/>
+  <Column ss:Width="400"/>
+  <Column ss:Width="150"/>
+  <Column ss:Width="80"/>
+  <Column ss:Width="200"/>
+  <Column ss:Width="180"/>
+  ${headerRow}${dataRows}
+</Table>
+</Worksheet>
+</Workbook>`;
+  const blob=new Blob([xml],{type:'application/vnd.ms-excel;charset=utf-8'});
+  const url=window.URL.createObjectURL(blob);
+  const a=document.createElement('a');
+  a.style.display='none';
+  a.href=url;
+  a.download='backlog-fiscalizacao.xls';
+  document.body.appendChild(a);
+  a.click();
+  setTimeout(()=>{document.body.removeChild(a);window.URL.revokeObjectURL(url);},100);
 }
 
 window.addEventListener('scroll',function(){
