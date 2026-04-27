@@ -582,7 +582,6 @@ function toggleMsOpt(id,val,e){
   if(idx>-1) arr.splice(idx,1); else arr.push(val);
   renderMsTags(id);
   renderMsOpts(id,MS_OPTS_ALL[id]);
-  doConsult();
 }
 
 function removeMsTag(id,val,e){
@@ -591,7 +590,6 @@ function removeMsTag(id,val,e){
   arr.splice(arr.indexOf(val),1);
   renderMsTags(id);
   renderMsOpts(id,MS_OPTS_ALL[id]);
-  doConsult();
 }
 
 function renderMsTags(id){
