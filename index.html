@@ -762,7 +762,7 @@ function deps(){
 }
 
 function sprint(){
-  const SPS=[{id:'Sprint 19',cls:'s19',dt:'13/04–24/04'},{id:'Sprint 20',cls:'s20',dt:'27/04–08/05'},{id:'Sprint 21',cls:'s21',dt:'11/05–22/05'},{id:'Sprint 22',cls:'s22',dt:'25/05–05/06'},{id:'Sprint 23',cls:'s23',dt:'08/06–19/06'}];
+const SPS=[{id:'Sprint 22',cls:'s22',dt:'25/05–05/06'},{id:'Sprint 23',cls:'s23',dt:'08/06–19/06'}];
   const clrMap={'s19':'#6b7280','s20':'#1d4ed8','s21':'#7c3aed','s22':'#0d9488','s23':'#ea580c'};
   document.getElementById('sGrid').innerHTML=SPS.map(s=>{
     const it=fd.filter(x=>x.sp===s.id);
@@ -811,11 +811,11 @@ function charts(){
   });
   document.getElementById('cStat').style.cursor='pointer';
 
-  const spls=['Sprint 19','Sprint 20','Sprint 21','Sprint 22','Sprint 23'];
+  const spls=['Sprint 22','Sprint 23'];
   if(CH.spr)CH.spr.destroy();
   CH.spr=new Chart(document.getElementById('cSpr'),{
     type:'bar',
-    data:{labels:spls,datasets:[{label:'US',data:spls.map(s=>fd.filter(x=>x.sp===s).length),backgroundColor:['#6b7280bb','#1d4ed8bb','#7c3aedbb','#0d9488bb','#ea580cbb'],borderColor:['#6b7280','#1d4ed8','#7c3aed','#0d9488','#ea580c'],borderWidth:2,borderRadius:6}]},
+    data:{labels:spls,datasets:[{label:'US',data:spls.map(s=>fd.filter(x=>x.sp===s).length),backgroundColor:['#0d9488bb','#ea580cbb'],borderColor:['#0d9488','#ea580c'], borderWidth:2,borderRadius:6}]},
     options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false},tooltip:{callbacks:{label:ctx=>ctx.raw+' US'}}},
       onClick:function(e,els){if(els.length){const sp=spls[els[0].index];chartFilter('sprint',sp);}},
       scales:{y:{beginAtZero:true,grid:{color:'#f1f5f9'},ticks:{font:{family:'Inter',size:10},stepSize:1}},x:{grid:{display:false},ticks:{font:{family:'Inter',size:10}}}}
@@ -836,7 +836,7 @@ function charts(){
   document.getElementById('cDep').style.cursor='pointer';
 
   // GRÁFICO EVOLUÇÃO POR SPRINT
-  const spls2=['Sprint 19','Sprint 20','Sprint 21','Sprint 22','Sprint 23'];
+  const spls2=['Sprint 22','Sprint 23'];
   const concPorSprint=spls2.map(s=>fd.filter(x=>x.sp===s&&isConcluido(x.st)).length);
   const totalPorSprint=spls2.map(s=>fd.filter(x=>x.sp===s).length);
   const pctPorSprint=spls2.map((s,i)=>totalPorSprint[i]>0?Math.round((concPorSprint[i]/totalPorSprint[i])*100):0);
