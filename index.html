@@ -811,7 +811,7 @@ function charts(){
   });
   document.getElementById('cStat').style.cursor='pointer';
 
-  const spls=['Sprint 22','Sprint 23','Sprint 24',,'Sprint 25','Sprint 26','Sprint 27','Sprint 28'];
+  const spls=['Sprint 22','Sprint 23','Sprint 24',,'Sprint 25','Sprint 26','Sprint 27','Sprint 28','Sprint 29','Sprint 30','Sprint 31','Sprint 32','Sprint 33','Sprint 34','Sprint 35'];
   if(CH.spr)CH.spr.destroy();
   CH.spr=new Chart(document.getElementById('cSpr'),{
     type:'bar',
@@ -836,7 +836,7 @@ function charts(){
   document.getElementById('cDep').style.cursor='pointer';
 
   // GRÁFICO EVOLUÇÃO POR SPRINT
-  const spls2=['Sprint 22','Sprint 23','Sprint 24',,'Sprint 25','Sprint 26','Sprint 27','Sprint 28'];
+  const spls2=['Sprint 22','Sprint 23','Sprint 24',,'Sprint 25','Sprint 26','Sprint 27','Sprint 28','Sprint 29','Sprint 30','Sprint 31','Sprint 32','Sprint 33','Sprint 34','Sprint 35'];
   const concPorSprint=spls2.map(s=>fd.filter(x=>x.sp===s&&isConcluido(x.st)).length);
   const totalPorSprint=spls2.map(s=>fd.filter(x=>x.sp===s).length);
   const pctPorSprint=spls2.map((s,i)=>totalPorSprint[i]>0?Math.round((concPorSprint[i]/totalPorSprint[i])*100):0);
